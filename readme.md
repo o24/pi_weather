@@ -80,8 +80,8 @@ cronでrubyを実行する場合は、癖があるので注意
 crontab -e
 
 # 内容
-# 以下は1時間に1回取得
-* 1 * * * cd /git/pi_weather; /root/.rbenv/shims/ruby /git/pi_weather/script/run.rb > /dev/null
+# 以下は毎時0分に起動
+0 * * * * cd /git/pi_weather; /root/.rbenv/shims/ruby /git/pi_weather/script/run.rb > /dev/null
 ```
 
 ### apacheインストール
