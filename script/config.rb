@@ -17,4 +17,3 @@ ZONE_ID = "6710"
 # json保存先
 #JSON_DIR = File.absolute_path("../client/src/json")
 JSON_DIR = "../client/src/json"
-binding.pry
