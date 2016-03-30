@@ -10,7 +10,7 @@ pi上で表示させるhtmlです。
 
 * script
 yahoo天気から気象情報を取得するスクリプトです。
-Yahooに迷惑をかけないよう、ほどほどなスパンで取得しましょう。
+取得の間隔はYahooに迷惑をかけないようにしましょう。
 
 ## システム構成
 以下が必要になります。
@@ -26,55 +26,52 @@ Yahooに迷惑をかけないよう、ほどほどなスパンで取得しまし
 必要最低限のセットアップを記載します。
 既にapacheが動いている方など環境によってはカスタマイズが必要な場合もあります。
 
-### リポジトリclone
+__ !!ここからはpi(root)での作業になります。!! __
 
+### ssh ログイン
+```
+ssh root@pi
+```
+
+### リポジトリclone
+```
+mkdir /git
+cd /git
+git clone https://github.com/o24/pi_weather.git
+```
+
+### 必要な地域の登録
+```
+cd /git/pi_weather/script/
+vi config.rb
+```
+
+以下の`AREA_ID`, `ZONE_ID`を設定します
+```
+# 都道府県
+AREA_ID = "34"
+# 北部、南部など
+ZONE_ID = "6710"
+```
 
 ### rubyインストール
+以下のgemが必要です。
+rubyインストール後実行してください。
 
-### 1. 気象情報
-本スクリプトはrubyを使用しています。
-rubyのインストールは各自調べて下さい。
-
-* gem install
 ```
 gem install nokogiri pry pry-byebug
 ```
 
-* エリアの設定
-```
-cd script
-
-# 設定ファイル修正
-# 初期は広島の気象情報になっていますので各自修正してください。
-vi config.rb
-```
-
-* cron登録
+### cron登録
+cronでrubyを実行する場合は、癖があるので注意
 ```
 crontab -e
 
-# cronでrubyを実行する場合は、書き方に癖があるので注意
-5 * * * * cd /DIR/pi_weather; /root/.rbenv/shims/ruby /DIR/pi_weather/script/run.rb > /dev/null
+# 内容
+* 1 * * * cd /DIR/pi_weather; /root/.rbenv/shims/ruby /DIR/pi_weather/script/run.rb > /dev/null
 ```
 
-### 2. html(apache)設定
-以前はparse.comへhtmlと気象情報を置いていましたが、parse.comが2017年にサービス終了するので、
-pi単体で動くようにしました。
-複数のpiで表示させたい場合は、S3やレンタルサーバーへ置いてもいいと思います。
-
-html一式は`client/src`配下全てです。
-こちらをapacheのdocument_rootへ設定してください。
-
-
-* リポジトリclone
-```
-cd /
-mkdir /git
-cd git
-git clone
-```
-
-* apacheインストール
+### apacheインストール
 ```
 apt-get update
 apt-get upgrade
@@ -83,13 +80,13 @@ apt-get install apache2
 
 ```
 
-* apache自動起動
+### apache自動起動
 ```
 cd /etc/rc2.d
 mv S02apache2 S20apache2
 ```
 
-* apache設定
+### apache設定
 
 ```
 vi /etc/apache2/apache2.conf
@@ -105,11 +102,11 @@ DocumentRoot "/var/www"
 
 ```
 
+### apache 再起動
 ```
-# apache 再起動
 /etc/init.d/apache2 restart
 ```
 
-### 3. LCDディスプレイ、フルスクリーン化の設定
-piの組み立てや、kioskでのフルスクリーンなどの設定方法は以下を参考に
+### LCDディスプレイ組み立て、フルスクリーン化について
+以下を参考に
 [LCDディスプレイを取り付けて天気予報付き置き時計にする](http://blog.o24.me/?p=749)
