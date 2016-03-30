@@ -35,6 +35,16 @@ yahoo天気から気象情報を取得するスクリプトです。
 ssh root@pi
 ```
 
+### interfaces設定
+localhostへアクセスできない場合、以下を設定
+
+```
+vi /etc/network/interfaces
+
+# 追記
+auto lo
+```
+
 ### リポジトリclone
 ```
 mkdir /git
