@@ -4,6 +4,8 @@
 詳しくは以下の記事をご覧ください
 [LCDディスプレイを取り付けて天気予報付き置き時計にする](http://blog.o24.me/?p=749)
 
+![./docs/thumb.jpg](./docs/thumb.jpg)
+
 ## ディレクトリ構成
 * client
 pi上で表示させるhtmlです。
