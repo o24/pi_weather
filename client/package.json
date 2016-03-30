@@ -1,0 +1,11 @@
+{
+  "name": "demo",
+  "version": "1.0.0",
+  "description": "demo",
+  "author": "Kenji Onishi",
+  "dependencies": {},
+  "devDependencies": {
+    "browser-sync": ">=2.11.1",
+    "gulp": ">=3.9.1"
+  }
+}

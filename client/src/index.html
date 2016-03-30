@@ -1,0 +1,263 @@
+<html>
+
+<head>
+  <title>title</title>
+  <link rel="stylesheet" href="/css/bootstrap_3.3.2.min.css">
+  <link rel="stylesheet" href="/css/weather.css">
+
+</head>
+
+<body class="night">
+  <!--
+  <link rel="stylesheet" href="/css/weather-dev.css">
+  <div class="debug">
+  </div>
+  -->
+
+  <div id="wrap" class="">
+
+    <div id="time">
+      loading...
+    </div>
+
+    <div id="weather">
+      <div id="day_wrap">
+        <span id="date"></span>
+        <span id="day"></span>
+        <span id="holiday"></span>
+      </div>
+
+      <div class="weather_row">
+        <img id="temp_icon" src="" alt="">
+        <span id="state"></span>
+
+        <span id="temp_max"></span> /
+        <span id="temp_min"></span>
+      </div>
+
+      <div id="forcast">
+        <div id="item1" class="fc_item">
+          <div class="header">
+            0-6
+          </div>
+          <div class="footer">
+          </div>
+        </div>
+
+        <div id="item2" class="fc_item">
+          <div class="header">
+            6-12
+          </div>
+          <div class="footer">
+          </div>
+        </div>
+
+        <div id="item3" class="fc_item">
+          <div class="header">
+            12-18
+          </div>
+          <div class="footer">
+          </div>
+        </div>
+
+        <div id="item4" class="fc_item">
+          <div class="header">
+            18-24
+          </div>
+          <div class="footer">
+          </div>
+        </div>
+      </div>
+      <div id="second_bar" class="bar"></div>
+      <div id="bar" class="bar"></div>
+    </div>
+
+  </div>
+
+
+  <script src="/js/jquery_2.1.1.min.js"></script>
+  <script src="/js/log.js"></script>
+  <script src="/js/parse-1.4.2.min.js"></script>
+
+  <script>
+    var loopCount = 0;
+    var intervalCount = 0;
+    // 30分毎
+    var intervalThreshold = 180;
+
+    Parse.initialize("KEUf3eCnx74LT4ru9BgwKyRSgSYdGFYRlNoqHBpG", "7guaSWyGIUXlZllhRBHp7h4r03sgUkDZ2KqZQrPt");
+
+    $(document).ready(function() {
+      getWeather();
+      var date = new Date();
+      showDate(date);
+
+      var interval = setInterval(function() {
+        var date = new Date();
+        showTime(date);
+
+        intervalCount++;
+
+        if ((intervalCount % intervalThreshold) == 0) {
+          showDate(date);
+          getWeather();
+        }
+      }, 1000);
+    });
+
+    // デバッグ用
+    var showMessage = function(str) {
+      var len = $(".debug").text().length;
+      if (len > 1000) {
+        $(".debug").empty();
+      }
+      var fix = "[" + str + "]";
+      var span = $("<span />").addClass("dev_child").text(fix);
+      $(".debug").append(span);
+    }
+
+    var showTime = function(d) {
+      var hour = d.getHours();
+      var second = d.getSeconds();
+      var str = zp(hour) + ":" + zp(d.getMinutes()) + ":" + zp(second);
+      $("#time").text(str);
+
+      //setStyle(hour);
+      updateBar(second, "#second_bar");
+    };
+
+    var showDate = function(d) {
+      var date_str = d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate();
+      $("#date").text(date_str);
+
+      var day_str = "(" + getDayStr(d) + ")";
+      $("#day").text(day_str);
+      showHoliday(d);
+
+    };
+    var showDay = function(d) {
+      // 0:日 6:土
+      var day_index = d.getDay();
+
+      if (day_index == 0) {
+        $("#day").attr("day", "sun");
+      } else if (day_index == 6) {
+        $("#day").attr("day", "sat");
+      } else {
+        $("#day").attr("day", "");
+      }
+
+    };
+
+    var showHoliday = function(d) {
+      var year = d.getFullYear();
+      var month = d.getMonth() + 1;
+      var date = d.getDate() - 1;
+
+      var url = "http://www.finds.jp/ws/calendar.php?json&y=" + year + "&m=" + month;
+      console.log(url);
+
+      $.getJSON(url, {
+          'hoge': 'piyo'
+        },
+        function(json) {
+          var holiday_list = json["result"]["day"];
+          var holiday = holiday_list[date];
+
+          if (holiday["hname"]) {
+            console.log("祝日!!");
+            $("#holiday").text(holiday["hname"]);
+            $("#day").attr("day", "holiday");
+          } else {
+            $("#holiday").empty();
+            showDay(d);
+          }
+        }
+      );
+    };
+
+    var zp = function(num) {
+      if (num >= 10) {
+        return num;
+      }
+      return "0" + num;
+    };
+    var updateBar = function(count, selector) {
+      var style = ((count % 10) + 1) * 10 + "%";
+      $(selector).css("width", style);
+    };
+
+    /**
+     * script/run.rbで作成した temp.jsonを取得する
+     * temp.jsonの保存先を変えている場合は、 urlを適宜変更してください
+     *
+     **/
+    var getWeather = function() {
+      var url = "/json/temp.json";
+      $.getJSON(url,function(json) {
+        showWeather(json);
+      });
+    }
+
+    /**
+     * script/run.rbを使用せず、別の気象情報を使っている場合は、
+     * 以下のフォーマットでこのメソッドに渡して下さい。
+     *
+     * {
+     *   "max":"19℃[+2]",
+     *   "min":"9℃[+4]",
+     *   "state":"晴れ",
+     *   "icon":"http://i.yimg.jp/images/weather/general/forecast/size75/moon.gif",
+     *   "forecast":[
+     *               "---",
+     *               "---",
+     *               "---",
+     *               "13％"
+     *    ]
+     * }
+     *
+     *
+     **/
+    var showWeather = function(obj) {
+      $("#temp_max").text(obj["max"]);
+      $("#temp_min").text(obj["min"]);
+      $("#state").text(obj["state"]);
+      $("#temp_icon").attr("src", obj["icon"]);
+
+      var forcast_list = obj["forecast"];
+
+      $.each(forcast_list, function(index, val) {
+        var fix_index = index + 1;
+        $("#item" + fix_index + " .footer").text(val);
+      });
+      loopCount++
+      updateBar(loopCount, "#bar");
+
+    }
+
+    var getDayStr = function(d) {
+      var days = new Array("日", "月", "火", "水", "木", "金", "土");
+      return days[d.getDay()];
+    };
+
+    var setStyle = function(hour) {
+
+      var add_class = "";
+      var remove_class = "";
+
+      if (hour < 20 && hour > 6) {
+        add_class = "noon";
+        remove_class = "night";
+
+      } else {
+        add_class = "night";
+        remove_class = "noon";
+
+      }
+
+      $("body").removeClass(remove_class).addClass(add_class);
+    };
+  </script>
+</body>
+
+</html>

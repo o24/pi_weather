@@ -1,0 +1,20 @@
+#time {
+  background: red;
+}
+.debug {
+  width: 90%;
+height: 90%;
+background: white;
+opacity: 0.7;
+position: fixed;
+top: 5%;
+left: 5%;
+z-index: 10000;
+color: blue;
+
+}
+.dev_child {
+  background: #0f0;
+    padding: 10px;
+    margin-right: 10px;
+}
