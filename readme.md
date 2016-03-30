@@ -81,7 +81,7 @@ crontab -e
 
 # 内容
 # 以下は毎時0分に起動
-0 * * * * cd /git/pi_weather; /root/.rbenv/shims/ruby /git/pi_weather/script/run.rb > /dev/null
+0 * * * * cd /git/pi_weather/script; /root/.rbenv/shims/ruby /git/pi_weather/script/run.rb > /dev/null
 ```
 
 ### apacheインストール

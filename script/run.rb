@@ -8,7 +8,7 @@ require 'pry-byebug'
 require 'nokogiri'
 require 'open-uri'
 
-require './config'
+require_relative './config'
 # gem install nokogiri pry pry-byebug
 
 # Yahoo天気から気性情報を取得
