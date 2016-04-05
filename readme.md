@@ -93,6 +93,14 @@ apt-get install apache2
 
 ```
 
+### DocumentRootの設定
+
+```
+cd /var
+mv www www_bk
+ln -s /git/pi_weather/client/src www
+```
+
 ### apache自動起動
 ```
 cd /etc/rc2.d
