@@ -155,7 +155,7 @@
     var showHoliday = function(d) {
       var year = d.getFullYear();
       var month = d.getMonth() + 1;
-      var date = d.getDate() - 1;
+      var date = d.getDate();
 
       GCalHolidays.get(function(data) {
         var holiday = data.filter(function(d) {return d.year === year && d.month === month && d.date === date;});
