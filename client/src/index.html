@@ -80,6 +80,7 @@
   <script src="/js/jquery_2.1.1.min.js"></script>
   <script src="/js/log.js"></script>
   <script src="/js/parse-1.4.2.min.js"></script>
+  <script src="/js/gcalendar-holidays.js"></script>
 
   <script>
     var loopCount = 0;
@@ -156,26 +157,17 @@
       var month = d.getMonth() + 1;
       var date = d.getDate() - 1;
 
-      var url = "http://www.finds.jp/ws/calendar.php?json&y=" + year + "&m=" + month;
-      console.log(url);
-
-      $.getJSON(url, {
-          'hoge': 'piyo'
-        },
-        function(json) {
-          var holiday_list = json["result"]["day"];
-          var holiday = holiday_list[date];
-
-          if (holiday["hname"]) {
-            console.log("祝日!!");
-            $("#holiday").text(holiday["hname"]);
-            $("#day").attr("day", "holiday");
-          } else {
-            $("#holiday").empty();
-            showDay(d);
-          }
+      GCalHolidays.get(function(data) {
+        var holiday = data.filter(function(d) {return d.year === year && d.month === month && d.date === date;});
+        if (holiday.length === 1) {
+          console.log("祝日!!");
+          $("#holiday").text(holiday[0]["title"]);
+          $("#day").attr("day", "holiday");
+        } else {
+          $("#holiday").empty();
+          showDay(d);
         }
-      );
+      }, year, month);
     };
 
     var zp = function(num) {
